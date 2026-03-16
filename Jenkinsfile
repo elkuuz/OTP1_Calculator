@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:${env.PATH}"
+        DOCKER_BIN = "/opt/homebrew/bin/docker"
+    }
+
     options {
         timestamps()
     }
