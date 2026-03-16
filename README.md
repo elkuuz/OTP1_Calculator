@@ -49,7 +49,144 @@ mvn clean test
 mvn clean verify
 ```
 
-The coverage report will be generated at:
+The JaCoCo coverage report will be generated at: `target/site/jacoco/index.html`
+
+## Test Results
+
+✅ **All 24 Tests Passing**
+- ExtraTest: 7 tests
+- KelvinToCelsiusTest: 4 tests  
+- CalculatorTest: 5 tests
+- SquareTest: 6 tests
+- MainTest: 2 tests
+
+## Code Coverage
+
+✅ **100% Code Coverage**
+- **Calculator.java**: 100% instruction coverage (78/78), 100% branch coverage (4/4), 100% line coverage (23/23)
+- **Main.java**: 100% instruction coverage (71/71), 100% line coverage (21/21)
+
+## Docker Setup
+
+### Build Docker Image
+```bash
+docker build -t otp1_calculator:local .
+```
+
+### Run Docker Container
+```bash
+docker run --rm otp1_calculator:local
+```
+
+Expected output:
+```
+...Power on...
+Add 500      = 500.0
+Add 200      = 700.0
+Subtract 100 = 600.0
+Divide by 2  = 300.0
+Multiply by 10 = 3000.0
+...Resetting...
+Add 500      = 500.0
+...Power off...
+```
+
+## Jenkins Integration
+
+A declarative pipeline (`Jenkinsfile`) is included for automated build, test, and deployment:
+
+### Pipeline Stages
+1. **Checkout** - Clones repository from GitHub
+2. **Build, Test, Coverage** - Runs `mvn clean verify` with JaCoCo
+3. **Build Docker Image** - Creates Docker image (can be disabled)
+4. **Smoke Test Docker Image** - Verifies image runs correctly
+5. **Push Docker Image** - Deploys to Docker Hub (optional)
+
+### Setup Instructions
+See [JENKINS_SETUP.md](JENKINS_SETUP.md) for detailed configuration steps.
+
+### Building with Jenkins
+```groovy
+// Jenkins will automatically:
+// 1. Clone your GitHub repo
+// 2. Run Maven clean verify
+// 3. Generate JaCoCo coverage reports
+// 4. Publish test results (24 tests)
+// 5. Build and test Docker image
+// 6. Archive JaCoCo reports as artifacts
+```
+
+### Post-Build Artifacts
+- JUnit test reports: `target/surefire-reports/*.xml`
+- JaCoCo coverage: `target/site/jacoco/**`
+- Built JAR: `target/*.jar`
+- Docker build logs: `docker-output.log`
+
+## API Documentation
+
+### Calculator Methods
+
+#### Basic Operations
+```java
+calculator.add(double n);           // Adds to result
+calculator.subtract(double n);      // Subtracts from result
+calculator.multiply(double n);      // Multiplies result
+calculator.divide(double n);        // Divides result (throws ArithmeticException if n=0)
+```
+
+#### Advanced Operations
+```java
+calculator.square(double n);        // Sets result to n²
+calculator.squareRoot(double n);    // Sets result to √n (throws IllegalArgumentException if n<0)
+calculator.kelvinToCelsius(double n); // Converts K to °C: result = n - 273.15
+```
+
+#### Utility Methods
+```java
+calculator.getResult();             // Returns current result
+calculator.reset();                 // Resets result to 0
+calculator.powerOn();               // Initialize calculator
+calculator.powerOff();              // Shutdown calculator
+```
+
+### Example Usage
+```java
+Calculator calc = new Calculator();
+calc.powerOn();
+calc.add(300);
+calc.kelvinToCelsius(300);          // Converts 300K to Celsius
+System.out.println(calc.getResult()); // Output: 26.85
+```
+
+## Continuous Integration / Continuous Deployment
+
+This project is set up for CI/CD with:
+- **Version Control**: GitHub (`https://github.com/elkuuz/OTP1_Calculator`)
+- **Build Automation**: Maven with JaCoCo code coverage
+- **Pipeline**: Jenkins Declarative Pipeline with automated testing and Docker deployment
+- **Container Registry**: Docker Hub (optional deployment)
+
+## Author
+
+Elias Eide
+
+## License
+
+This project is open source and available on GitHub.
+
+## Assignment Details
+
+**Week 4-5 In-Class Temperature Converter & Calculator Extension**
+
+This project implements:
+1. ✅ Kelvin-to-Celsius conversion function with formula: °C = K - 273.15
+2. ✅ Comprehensive JUnit 5 test cases (24 tests total)
+3. ✅ JaCoCo code coverage report (100% coverage achieved)
+4. ✅ Jenkinsfile for automated pipeline execution
+5. ✅ Docker containerization with multi-stage build
+6. ✅ GitHub repository for version control
+
+````
 
 - HTML: `target/site/jacoco/index.html`
 - XML: `target/site/jacoco/jacoco.xml`
