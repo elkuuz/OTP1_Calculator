@@ -37,6 +37,7 @@ src/
 ### Prerequisites
 - Java 21 or higher
 - Maven 3.x
+- Docker (for container build/run and optional Jenkins deploy stage)
 
 ### Run Tests
 ```bash
@@ -118,7 +119,42 @@ If Jenkins uses an older JDK, the build will fail during compilation.
 
 ### Pipeline Option
 
-A root `Jenkinsfile` is included for Jenkins Pipeline jobs. It checks out the code, runs `mvn clean verify`, publishes JUnit test results, and archives the JaCoCo report artifacts.
+A root `Jenkinsfile` is included for Jenkins Pipeline jobs. It performs:
+
+- Checkout
+- `mvn clean verify` (tests + JaCoCo report)
+- JUnit publishing (`target/surefire-reports/*.xml`)
+- JaCoCo artifact archiving (`target/site/jacoco/**`)
+- Optional Docker image build + smoke test
+- Optional Docker Hub push
+
+Pipeline parameters:
+
+- `BUILD_DOCKER_IMAGE` (default `true`)
+- `DEPLOY_TO_DOCKER_HUB` (default `false`)
+- `DOCKER_IMAGE` (default `elkuuz/otp1_calculator`)
+- `DOCKER_TAG` (default `latest`)
+
+For Docker Hub deployment from Jenkins, add a `Username with password` credential with ID `dockerhub-credentials`.
+
+## Docker (Local Verification)
+
+Build and run locally:
+
+```bash
+docker build -t otp1_calculator:local .
+docker run --rm otp1_calculator:local
+```
+
+Expected output includes calculator console lines such as `...Power on...`.
+
+Optional Docker Hub push from local terminal:
+
+```bash
+docker tag otp1_calculator:local <dockerhub-user>/otp1_calculator:latest
+docker login
+docker push <dockerhub-user>/otp1_calculator:latest
+```
 
 ## Test Coverage
 
